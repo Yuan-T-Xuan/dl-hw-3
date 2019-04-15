@@ -43,8 +43,8 @@ def train(G, D, lr, data_loader, epochs):
         for _imgs, _ in data_loader:
             G.zero_grad()
             D.zero_grad()
-            imgs = _imgs.view(-1, 28 * 28)
-            seeds = torch.tensor(np.random.random((imgs.size()[0], 100)), dtype=torch.float)
+            imgs = _imgs.cuda().view(-1, 28 * 28)
+            seeds = torch.tensor(np.random.random((imgs.size()[0], 100))/100.0, dtype=torch.float).cuda()
             generated = G(seeds)
             loss = - torch.sum(torch.log(D(imgs))) - torch.sum(torch.log(1.0 - D(generated)))
             loss = loss / imgs.size()[0]
@@ -54,7 +54,7 @@ def train(G, D, lr, data_loader, epochs):
             #
             G.zero_grad()
             D.zero_grad()
-            seeds = torch.tensor(np.random.random((imgs.size()[0], 100)), dtype=torch.float)
+            seeds = torch.tensor(np.random.random((imgs.size()[0], 100))/100.0, dtype=torch.float).cuda()
             generated = G(seeds)
             loss = - torch.sum(torch.log(D(generated))) / imgs.size()[0]
             loss.backward()
@@ -63,8 +63,8 @@ def train(G, D, lr, data_loader, epochs):
     return (loss_D, loss_G)
 
 if __name__ == "__main__":
-    g = G()
-    d = D()
+    g = G().cuda()
+    d = D().cuda()
     data_loader = get_fmnist_loader(30)
     loss_D, loss_G = train(g, d, 0.0001, data_loader, 10)
     plt.plot(loss_D)
