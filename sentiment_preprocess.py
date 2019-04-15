@@ -33,7 +33,7 @@ def sentences2matrix(file_path, vocab, maxlen=400):
     f.close()
     matrix = []
     for line in lines:
-        matrix.append(sentence2vector(line, vocab))
+        matrix.append(sentence2vector(line, vocab, maxlen))
     return np.array(matrix, dtype=int)
 
 """
