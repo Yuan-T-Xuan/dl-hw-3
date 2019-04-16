@@ -34,7 +34,7 @@ class GRU(nn.Module):
             hidden = self.initHidden(input.size()[0])
         output = self.embedding(input)
         output, hidden = self.gru(output, hidden)
-        output = output[:, -1, :].view(-1, self.gru_hidden_size)
+        output = torch.tanh(output[:, -1, :].view(-1, self.gru_hidden_size))
         output = self.linear(output)
         return output, hidden
 

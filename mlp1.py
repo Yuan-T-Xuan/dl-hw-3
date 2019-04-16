@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import *
 from sentiment_preprocess import *
@@ -11,12 +12,14 @@ class MLP(nn.Module):
         super(MLP, self).__init__()
         self.hidden_size = 400
         self.l1 = nn.Linear(self.hidden_size, self.hidden_size)
+        self.dropout1 = nn.Dropout(p=0.5)
         self.l2 = nn.Linear(self.hidden_size, self.hidden_size)
+        self.dropout2 = nn.Dropout(p=0.5)
         self.out = nn.Linear(self.hidden_size, 2)
     
     def forward(self, input):
-        output = self.l1(input)
-        output = self.l2(output)
+        output = self.dropout1(F.relu(self.l1(input)))
+        output = self.dropout2(F.relu(self.l2(output)))
         return self.out(output)
 
 def train_model(model, num_epochs, train_loader, test_loader, lr):
@@ -33,6 +36,7 @@ def train_model(model, num_epochs, train_loader, test_loader, lr):
             if i % 10 == 0:
                 print('[%5d, %5d] loss: %.3f' % (epoch + 1, i + 1, loss.item()))
     if test_loader:
+        model.eval()
         total = 0
         correct = 0
         for data in test_loader:
@@ -64,5 +68,5 @@ if __name__ == "__main__":
     test_data = TensorDataset(torch.from_numpy(m_test).cuda(), torch.from_numpy(labels_test).cuda())
     test_loader = DataLoader(test_data, shuffle=True, batch_size=100)
     #
-    train_model(model, 1000, train_loader, test_loader, 0.0001)
+    train_model(model, 100, train_loader, test_loader, 0.0001)
 
