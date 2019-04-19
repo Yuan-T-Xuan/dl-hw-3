@@ -30,5 +30,5 @@ def processAction(MDP, curr_state, curr_action):
     next_states, probabilities, rewards = MDP
     next_state = np.random.choice(next_states[curr_action][curr_state], p=probabilities[curr_action][curr_state])
     reward = rewards[next_state]
-    return (not (reward == 0), next_state, reward)
+    return (reward == 0, next_state, reward)
 
