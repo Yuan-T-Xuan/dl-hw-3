@@ -52,13 +52,10 @@ def encodeFeature(num):
 
 def train(num_actions, epsilon, alpha, gamma, W=None, epochs=50000):
     # W is a matrix with size (#actions, 7)
-    for_plot = list()
     if not W:
         W = np.random.random((num_actions, 7))
     MDP = loadMDP()
-    prevW = None
     for epoch in tqdm(range(epochs)):
-        prevW = copy.deepcopy(W)
         playing = True
         currState = 3
         currVector = encodeFeature(currState)
@@ -77,11 +74,6 @@ def train(num_actions, epsilon, alpha, gamma, W=None, epochs=50000):
             #
             currState = newState
             currVector = newVector
-        for_plot.append(np.sum(np.square(prevW - W)))
-    #
-    plt.plot(for_plot)
-    plt.show()
-    #
     return W
 
 def play(W):
