@@ -1,6 +1,8 @@
 from rl_setup import *
 import numpy as np
+import matplotlib.pyplot as plt
 from tqdm import tqdm
+import copy
 
 def encodeOneHot(num, max_state):
     encoded = np.zeros(max_state + 1)
@@ -10,10 +12,13 @@ def encodeOneHot(num, max_state):
 
 def train(num_actions, num_states, epsilon, alpha, gamma, W=None, epochs=50000):
     # W is a matrix with size (#actions, #states + 1)
+    for_plot = list()
     if not W:
         W = np.random.random((num_actions, num_states + 1))
     MDP = loadMDP()
+    prevW = None
     for epoch in tqdm(range(epochs)):
+        prevW = copy.deepcopy(W)
         playing = True
         currState = 3
         currVector = encodeOneHot(currState, num_states)
@@ -32,6 +37,11 @@ def train(num_actions, num_states, epsilon, alpha, gamma, W=None, epochs=50000):
             #
             currState = newState
             currVector = newVector
+        for_plot.append(np.sum(np.square(prevW - W)))
+    #
+    plt.plot(for_plot)
+    plt.show()
+    #
     return W
 
 def play(W):
