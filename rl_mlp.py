@@ -65,7 +65,7 @@ def play(model):
     return (steps, rt)
 
 if __name__ == "__main__":
-    model = torch.load("model.pt")
-    model = train(0.2, 0.005, 0.9, model, epochs=5000)
-    torch.save(model, "model7000.pt")
+    model = torch.load("model7000.pt")
+    model = train(0.2, 0.005, 0.9, model, epochs=4000)
+    torch.save(model, "model11000.pt")
 
